@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InstaCaption AI — Instagram Caption Generator</title>
+  <meta name="description" content="Generate stunning, viral Instagram captions with AI. Choose your category, style, and tone to craft the perfect caption with hashtags and emojis." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="20" height="20" rx="6" stroke="url(#grad1)" stroke-width="2"/>
+          <circle cx="12" cy="12" r="4" stroke="url(#grad1)" stroke-width="2"/>
+          <circle cx="17.5" cy="6.5" r="1.5" fill="url(#grad1)"/>
+          <defs>
+            <linearGradient id="grad1" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#f9a825"/>
+              <stop offset="0.5" stop-color="#e91e8c"/>
+              <stop offset="1" stop-color="#7c3aed"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="logo-text">InstaCaption <span class="ai-badge">AI</span></span>
+    </div>
+    <p class="tagline">Craft viral Instagram captions in seconds ✨</p>
+  </header>
+
+  <!-- Main App -->
+  <main class="main-container">
+    <div class="app-grid">
+      <!-- Left: Form Panel -->
+      <section class="form-panel glass-card" aria-label="Caption generator form">
+        <h1 class="panel-title">Generate Your Caption</h1>
+        <p class="panel-subtitle">Fill in the details below and let AI create the perfect caption for you.</p>
+
+        <form id="captionForm" novalidate>
+
+          <!-- Audience -->
+          <div class="field-group">
+            <label class="field-label" for="audience">
+              <span class="label-icon">🎯</span> Target Audience
+            </label>
+            <input
+              type="text"
+              id="audience"
+              class="field-input"
+              placeholder="e.g., entrepreneurs, fitness lovers, food bloggers…"
+              maxlength="100"
+            />
+          </div>
+
+          <!-- Topic -->
+          <div class="field-group">
+            <label class="field-label" for="topic">
+              <span class="label-icon">📝</span> What's your post about? <span class="required">*</span>
+            </label>
+            <textarea
+              id="topic"
+              class="field-textarea"
+              rows="3"
+              placeholder="Describe your topic, product, event, or idea…"
+              maxlength="500"
+              required
+            ></textarea>
+            <span class="char-count" id="topicCount">0 / 500</span>
+          </div>
+
+          <!-- Category + Style row -->
+          <div class="two-col">
+            <!-- Category -->
+            <div class="field-group">
+              <label class="field-label" for="category">
+                <span class="label-icon">📂</span> Category <span class="required">*</span>
+              </label>
+              <div class="custom-select-wrapper">
+                <select id="category" class="field-select" required>
+                  <option value="">Select category…</option>
+                  <option value="News">📰 News</option>
+                  <option value="Productivity">⚡ Productivity</option>
+                  <option value="Sales">💰 Sales</option>
+                  <option value="Marketing">📣 Marketing</option>
+                  <option value="Social Media">📱 Social Media</option>
+                  <option value="Hiring">🤝 Hiring</option>
+                  <option value="Business">💼 Business</option>
+                  <option value="Startup">🚀 Startup</option>
+                  <option value="Technology">💻 Technology</option>
+                  <option value="AI">🤖 AI</option>
+                  <option value="Education">🎓 Education</option>
+                  <option value="Finance">📊 Finance</option>
+                  <option value="Fashion">👗 Fashion</option>
+                  <option value="Travel">✈️ Travel</option>
+                  <option value="Food">🍽️ Food</option>
+                  <option value="Fitness">💪 Fitness</option>
+                  <option value="Entertainment">🎬 Entertainment</option>
+                  <option value="Personal Branding">🌟 Personal Branding</option>
+                  <option value="Real Estate">🏠 Real Estate</option>
+                  <option value="Healthcare">🏥 Healthcare</option>
+                  <option value="Lifestyle">🌸 Lifestyle</option>
+                  <option value="Others">✨ Others</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Style -->
+            <div class="field-group">
+              <label class="field-label" for="style">
+                <span class="label-icon">🎨</span> Caption Style <span class="required">*</span>
+              </label>
+              <div class="custom-select-wrapper">
+                <select id="style" class="field-select" required>
+                  <option value="">Select style…</option>
+                  <option value="Professional">🧑‍💼 Professional</option>
+                  <option value="Creative">🎭 Creative</option>
+                  <option value="Funny">😂 Funny</option>
+                  <option value="Inspirational">🌅 Inspirational</option>
+                  <option value="Storytelling">📖 Storytelling</option>
+                  <option value="Promotional">📣 Promotional</option>
+                  <option value="Luxury">👑 Luxury</option>
+                  <option value="Minimal">🤍 Minimal</option>
+                  <option value="Viral">🔥 Viral</option>
+                  <option value="Motivational">💥 Motivational</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Word limit -->
+          <div class="field-group">
+            <label class="field-label">
+              <span class="label-icon">📏</span> Max Words
+            </label>
+            <div class="slider-row">
+              <input type="range" id="wordLimit" class="slider" min="30" max="200" value="100" step="5" />
+              <span class="slider-value" id="wordLimitValue">100</span>
+            </div>
+          </div>
+
+          <!-- Language -->
+          <div class="field-group">
+            <label class="field-label" for="language">
+              <span class="label-icon">🌐</span> Language
+            </label>
+            <div class="custom-select-wrapper">
+              <select id="language" class="field-select">
+                <option value="English">🇬🇧 English (Simple)</option>
+                <option value="American English">🇺🇸 American English</option>
+                <option value="Hinglish">🇮🇳 Hinglish</option>
+                <option value="Spanish">🇪🇸 Spanish</option>
+                <option value="French">🇫🇷 French</option>
+                <option value="German">🇩🇪 German</option>
+                <option value="Portuguese">🇧🇷 Portuguese</option>
+                <option value="Arabic">🇸🇦 Arabic</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Output formats -->
+          <div class="field-group">
+            <label class="field-label">
+              <span class="label-icon">📋</span> Output Formats
+            </label>
+            <div class="checkbox-grid">
+              <label class="checkbox-item">
+                <input type="checkbox" id="fmt-caption" checked />
+                <span class="checkbox-custom"></span>
+                <span>Caption</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="fmt-cta" checked />
+                <span class="checkbox-custom"></span>
+                <span>Call to Action</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="fmt-hashtags" checked />
+                <span class="checkbox-custom"></span>
+                <span>Hashtags</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="fmt-emoji" checked />
+                <span class="checkbox-custom"></span>
+                <span>Emoji Version</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" id="fmt-plain" checked />
+                <span class="checkbox-custom"></span>
+                <span>Plain Version</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Generate button -->
+          <button type="submit" class="btn-generate" id="generateBtn">
+            <span class="btn-text">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M12 2L13.09 8.26L19 6L15.45 11.11L21 13L15.45 14.89L19 20L13.09 17.74L12 24L10.91 17.74L5 20L8.55 14.89L3 13L8.55 11.11L5 6L10.91 8.26L12 2Z" fill="currentColor"/></svg>
+              Generate Caption
+            </span>
+            <span class="btn-loader hidden">
+              <span class="dot-pulse"></span>
+            </span>
+          </button>
+
+        </form>
+      </section>
+
+      <!-- Right: Output Panel -->
+      <section class="output-panel" aria-label="Generated captions">
+        <!-- Empty state -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-illustration">
+            <div class="phone-mockup">
+              <div class="phone-screen">
+                <div class="post-preview">
+                  <div class="post-img-placeholder"></div>
+                  <div class="post-line short"></div>
+                  <div class="post-line"></div>
+                  <div class="post-line medium"></div>
+                  <div class="post-hashtag-row">
+                    <div class="hashtag-pill">#hashtag</div>
+                    <div class="hashtag-pill">#caption</div>
+                    <div class="hashtag-pill">#AI</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h2 class="empty-title">Your caption will appear here</h2>
+          <p class="empty-subtitle">Fill in the form and hit <strong>Generate</strong> to craft your perfect Instagram caption ✨</p>
+
+          <!-- Quick tips -->
+          <div class="tips-grid">
+            <div class="tip-card">
+              <span class="tip-icon">🎯</span>
+              <p>Be specific about your audience for better results</p>
+            </div>
+            <div class="tip-card">
+              <span class="tip-icon">🔥</span>
+              <p>Viral style captions get 3x more engagement</p>
+            </div>
+            <div class="tip-card">
+              <span class="tip-icon">🏷️</span>
+              <p>SEO-friendly hashtags boost your discoverability</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results" id="results" style="display:none">
+          <div class="results-header">
+            <h2 class="results-title">Your Caption is Ready! 🎉</h2>
+            <div class="results-meta" id="resultsMeta"></div>
+          </div>
+
+          <!-- Caption card -->
+          <div class="output-card" id="captionCard" style="display:none">
+            <div class="card-header">
+              <span class="card-label">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                Instagram Caption
+              </span>
+              <button class="copy-btn" onclick="copyContent('captionContent')" title="Copy caption">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy
+              </button>
+            </div>
+            <div class="card-body" id="captionContent"></div>
+          </div>
+
+          <!-- CTA card -->
+          <div class="output-card" id="ctaCard" style="display:none">
+            <div class="card-header">
+              <span class="card-label">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                Call to Action
+              </span>
+              <button class="copy-btn" onclick="copyContent('ctaContent')" title="Copy CTA">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy
+              </button>
+            </div>
+            <div class="card-body" id="ctaContent"></div>
+          </div>
+
+          <!-- Hashtags card -->
+          <div class="output-card" id="hashtagsCard" style="display:none">
+            <div class="card-header">
+              <span class="card-label">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.243 3.03a1 1 0 01.727 1.213L9.53 6h2.94l.56-2.243a1 1 0 111.94.486L14.53 6H17a1 1 0 110 2h-2.97l-1 4H15a1 1 0 110 2h-2.47l-.56 2.242a1 1 0 11-1.94-.485L10.47 14H7.53l-.56 2.242a1 1 0 11-1.94-.485L5.47 14H3a1 1 0 110-2h2.97l1-4H5a1 1 0 110-2h2.47l.56-2.243a1 1 0 011.213-.727zM9.03 8l-1 4h2.938l1-4H9.031z" clip-rule="evenodd"/></svg>
+                Hashtags
+              </span>
+              <button class="copy-btn" onclick="copyContent('hashtagsContent')" title="Copy hashtags">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy
+              </button>
+            </div>
+            <div class="card-body hashtags-body" id="hashtagsContent"></div>
+          </div>
+
+          <!-- Emoji version card -->
+          <div class="output-card" id="emojiCard" style="display:none">
+            <div class="card-header">
+              <span class="card-label">
+                <span style="font-size:1.1rem">😊</span>
+                Emoji Version
+              </span>
+              <button class="copy-btn" onclick="copyContent('emojiContent')" title="Copy emoji version">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy
+              </button>
+            </div>
+            <div class="card-body" id="emojiContent"></div>
+          </div>
+
+          <!-- Plain version card -->
+          <div class="output-card" id="plainCard" style="display:none">
+            <div class="card-header">
+              <span class="card-label">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0h8v12H6V4z" clip-rule="evenodd"/></svg>
+                Plain (No Emoji) Version
+              </span>
+              <button class="copy-btn" onclick="copyContent('plainContent')" title="Copy plain version">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                Copy
+              </button>
+            </div>
+            <div class="card-body" id="plainContent"></div>
+          </div>
+
+          <!-- Copy all button -->
+          <button class="btn-copy-all" onclick="copyAll()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy All Content
+          </button>
+
+          <!-- Regenerate -->
+          <button class="btn-regenerate" id="regenerateBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Regenerate
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    Copied to clipboard!
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
