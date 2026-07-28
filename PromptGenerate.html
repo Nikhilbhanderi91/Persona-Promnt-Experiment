@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptGenerate - Professional AI Prompt & Caption Generator</title>
+    <!-- Google Fonts: Poppins & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-hover: #5a52e0;
+            --secondary: #8B5CF6;
+            --accent: #00D4FF;
+            --bg-dark: #0F172A;
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --sidebar-width: 320px;
+            --toast-bg: rgba(15, 23, 42, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(108, 99, 255, 0.25) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.2) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(0, 212, 255, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Layout Structure */
+        .app-container {
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #FFF 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand i {
+            color: var(--primary);
+            -webkit-text-fill-color: initial;
+            font-size: 1.4rem;
+        }
+
+        .history-controls {
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-sm:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-danger-sm:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .history-item-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .history-item-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .delete-hist-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+
+        .delete-hist-btn:hover {
+            color: #f87171;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px;
+            max-width: 1200px;
+            width: calc(100vw - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .title-area h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFF 0%, #CBD5E1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Cards Layout */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 14px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        .card-title i {
+            color: var(--accent);
+        }
+
+        /* Form Inputs */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #CBD5E1;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="text"], input[type="password"], select, textarea {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #FFF;
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        select option {
+            background: #0F172A;
+            color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .char-counter {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* API Settings Bar */
+        .api-config-bar {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1.2fr;
+            gap: 14px;
+            align-items: center;
+        }
+
+        /* Action Buttons */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #FFF;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, #00B4DB 0%, var(--accent) 100%);
+            color: #0F172A;
+            font-weight: 700;
+        }
+
+        .btn-accent:hover {
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #FFF;
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-clear {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-clear:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        /* Output Box Styling */
+        .output-box {
+            position: relative;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #E2E8F0;
+            white-space: pre-wrap;
+            min-height: 160px;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .output-box.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Loading Spinner Overlay */
+        .spinner-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .spinner-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--toast-bg);
+            border: 1px solid var(--card-border);
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success i { color: #10B981; }
+        .toast-error i { color: #EF4444; }
+        .toast-info i { color: var(--accent); }
+
+        /* Hidden File Input */
+        #import-file-input {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+            .api-config-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100vw;
+                padding: 16px;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar: History & Saved Prompts -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> PromptGenerate
+                </div>
+                <button class="delete-hist-btn mobile-toggle" id="close-sidebar-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="history-controls">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="history-search" placeholder="Search history...">
+                </div>
+                <div class="history-actions">
+                    <button class="btn-sm" id="export-json-btn" title="Export History to JSON">
+                        <i class="fa-solid fa-download"></i> Export
+                    </button>
+                    <button class="btn-sm" id="import-json-btn" title="Import History from JSON">
+                        <i class="fa-solid fa-upload"></i> Import
+                    </button>
+                    <button class="btn-sm btn-danger-sm" id="clear-all-history-btn" title="Delete All History">
+                        <i class="fa-solid fa-trash"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="history-list" id="history-list">
+                <!-- History Items dynamically rendered here -->
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="title-area">
+                    <h1>Instagram AI Prompt Generator</h1>
+                    <p>Craft high-converting, professional AI prompts & generate Instagram captions instantly.</p>
+                </div>
+                <button class="mobile-toggle" id="open-sidebar-btn">
+                    <i class="fa-solid fa-history"></i> History
+                </button>
+            </header>
+
+            <!-- API Provider & Key Configuration -->
+            <section class="api-config-bar">
+                <div class="form-group">
+                    <label for="ai-provider"><i class="fa-solid fa-robot"></i> AI Provider</label>
+                    <select id="ai-provider">
+                        <option value="openai">OpenAI</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ai-model"><i class="fa-solid fa-microchip"></i> Model Version</label>
+                    <select id="ai-model">
+                        <!-- Populated dynamically based on Provider selection -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="api-key"><i class="fa-solid fa-key"></i> API Key</label>
+                    <input type="password" id="api-key" placeholder="Enter your API Key">
+                </div>
+            </section>
+
+            <!-- Main Input Form & Prompt Output Grid -->
+            <div class="grid-layout">
+                <!-- Inputs Section -->
+                <section class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-sliders"></i> Prompt Parameters
+                        </div>
+                        <span class="char-counter" id="shortcut-hint">Press Ctrl + Enter to Generate</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="input-role">Role</label>
+                            <input type="text" id="input-role" placeholder="e.g., Expert Instagram Strategist & Copywriter" value="Expert Social Media Strategist & Instagram Copywriter">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-audience">Audience</label>
+                            <input type="text" id="input-audience" placeholder="e.g., Tech Entrepreneurs, Gen Z, Fitness Enthusiasts" value="Young professionals & tech enthusiasts interested in AI productivity tools">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="input-context">Context / Topic <span class="char-counter" id="context-count">0 / 500</span></label>
+                            <textarea id="input-context" maxlength="500" placeholder="Describe what the post or reel is about... e.g., Launching a new productivity app that uses AI to organize daily schedules.">Launching an innovative AI-powered daily planner app that helps busy creators save 2 hours every day.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-format">Format</label>
+                            <input type="text" id="input-format" placeholder="e.g., Hook + Story + Bullet Points + CTA + 5 Hashtags" value="Strong hook line, short engaging story, bullet points of key benefits, clear CTA, and 5 niche hashtags">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-constraints">Constraints</label>
+                            <input type="text" id="input-constraints" placeholder="e.g., Under 150 words, energetic tone, include emojis" value="Keep under 180 words, friendly energetic tone, rich with relevant emojis, avoid clickbait text">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="input-language">Language</label>
+                            <input type="text" id="input-language" placeholder="e.g., English (US), Spanish, French" value="English (US)">
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="generate-prompt-btn">
+                            <i class="fa-solid fa-wand-magic"></i> Generate Prompt
+                        </button>
+                        <button class="btn btn-clear" id="clear-inputs-btn">
+                            <i class="fa-solid fa-rotate-left"></i> Clear
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Output Section: Generated Prompt -->
+                <section class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fa-solid fa-terminal"></i> Generated AI Prompt
+                        </div>
+                    </div>
+
+                    <div class="output-box empty" id="generated-prompt-box">
+                        Your optimized AI prompt will appear here once generated...
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" id="copy-prompt-btn">
+                            <i class="fa-solid fa-copy"></i> Copy Prompt
+                        </button>
+                        <button class="btn btn-secondary" id="download-prompt-btn">
+                            <i class="fa-solid fa-file-arrow-down"></i> Download (.txt)
+                        </button>
+                        <button class="btn btn-accent" id="generate-caption-btn">
+                            <i class="fa-solid fa-paper-plane"></i> Generate Caption using AI
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Output Section: AI Response / Caption -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fa-solid fa-sparkles"></i> AI Generated Instagram Caption
+                    </div>
+                    <button class="btn-sm" id="copy-caption-btn">
+                        <i class="fa-solid fa-copy"></i> Copy Caption
+                    </button>
+                </div>
+
+                <div style="position: relative;">
+                    <div class="output-box empty" id="ai-caption-box">
+                        Click "Generate Caption using AI" to send the prompt to OpenAI or Gemini and receive your caption directly here...
+                    </div>
+                    
+                    <div class="spinner-overlay" id="caption-spinner">
+                        <div class="spinner"></div>
+                        <span style="font-size: 0.9rem; color: var(--accent); font-weight: 500;">Connecting to AI Provider...</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Hidden file input for importing history JSON -->
+    <input type="file" id="import-file-input" accept=".json">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <!-- Application Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Models configuration
+            const MODEL_OPTIONS = {
+                openai: [
+                    { value: 'gpt-4o', name: 'GPT-4o (Latest Flagship)' },
+                    { value: 'gpt-4o-mini', name: 'GPT-4o Mini (Fast & Lightweight)' },
+                    { value: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
+                ],
+                gemini: [
+                    { value: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Latest)' },
+                    { value: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
+                    { value: 'gemini-1.5-flash-latest', name: 'Gemini 1.5 Flash' },
+                    { value: 'gemini-1.5-pro-latest', name: 'Gemini 1.5 Pro' }
+                ]
+            };
+
+            // DOM Elements
+            const aiProviderSelect = document.getElementById('ai-provider');
+            const aiModelSelect = document.getElementById('ai-model');
+            const apiKeyInput = document.getElementById('api-key');
+
+            const roleInput = document.getElementById('input-role');
+            const audienceInput = document.getElementById('input-audience');
+            const contextInput = document.getElementById('input-context');
+            const formatInput = document.getElementById('input-format');
+            const constraintsInput = document.getElementById('input-constraints');
+            const languageInput = document.getElementById('input-language');
+
+            const contextCountDisplay = document.getElementById('context-count');
+
+            const generatePromptBtn = document.getElementById('generate-prompt-btn');
+            const clearInputsBtn = document.getElementById('clear-inputs-btn');
+            const copyPromptBtn = document.getElementById('copy-prompt-btn');
+            const downloadPromptBtn = document.getElementById('download-prompt-btn');
+            const generateCaptionBtn = document.getElementById('generate-caption-btn');
+            const copyCaptionBtn = document.getElementById('copy-caption-btn');
+
+            const generatedPromptBox = document.getElementById('generated-prompt-box');
+            const aiCaptionBox = document.getElementById('ai-caption-box');
+            const captionSpinner = document.getElementById('caption-spinner');
+
+            const historyList = document.getElementById('history-list');
+            const historySearchInput = document.getElementById('history-search');
+            const exportJsonBtn = document.getElementById('export-json-btn');
+            const importJsonBtn = document.getElementById('import-json-btn');
+            const importFileInput = document.getElementById('import-file-input');
+            const clearAllHistoryBtn = document.getElementById('clear-all-history-btn');
+
+            const sidebar = document.getElementById('sidebar');
+            const openSidebarBtn = document.getElementById('open-sidebar-btn');
+            const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+
+            let historyData = [];
+
+            // --- Initialization ---
+            init();
+
+            function init() {
+                loadApiKeys();
+                updateModelDropdown();
+                loadHistory();
+                setupEventListeners();
+                updateCharCount();
+            }
+
+            // --- API Key & Settings Handling ---
+            function updateModelDropdown() {
+                const provider = aiProviderSelect.value;
+                const models = MODEL_OPTIONS[provider] || [];
+                aiModelSelect.innerHTML = models.map(m => `<option value="${m.value}">${m.name}</option>`).join('');
+                
+                // Load saved API key for provider
+                const savedKey = localStorage.getItem(`pg_apikey_${provider}`) || '';
+                apiKeyInput.value = savedKey;
+            }
+
+            function loadApiKeys() {
+                const savedProvider = localStorage.getItem('pg_selected_provider') || 'openai';
+                aiProviderSelect.value = savedProvider;
+            }
+
+            function saveApiKey() {
+                const provider = aiProviderSelect.value;
+                const key = apiKeyInput.value.trim();
+                localStorage.setItem(`pg_apikey_${provider}`, key);
+                localStorage.setItem('pg_selected_provider', provider);
+            }
+
+            // --- Event Listeners Setup ---
+            function setupEventListeners() {
+                aiProviderSelect.addEventListener('change', () => {
+                    saveApiKey();
+                    updateModelDropdown();
+                });
+
+                apiKeyInput.addEventListener('input', saveApiKey);
+
+                contextInput.addEventListener('input', updateCharCount);
+
+                generatePromptBtn.addEventListener('click', () => {
+                    const prompt = generatePrompt();
+                    if (prompt) {
+                        showToast('Prompt generated successfully!', 'success');
+                    }
+                });
+
+                clearInputsBtn.addEventListener('click', clearFormInputs);
+
+                copyPromptBtn.addEventListener('click', () => {
+                    const text = generatedPromptBox.innerText;
+                    if (!text || generatedPromptBox.classList.contains('empty')) {
+                        showToast('No prompt to copy!', 'error');
+                        return;
+                    }
+                    copyToClipboard(text, copyPromptBtn, 'Copy Prompt');
+                });
+
+                copyCaptionBtn.addEventListener('click', () => {
+                    const text = aiCaptionBox.innerText;
+                    if (!text || aiCaptionBox.classList.contains('empty')) {
+                        showToast('No caption to copy!', 'error');
+                        return;
+                    }
+                    copyToClipboard(text, copyCaptionBtn, 'Copy Caption');
+                });
+
+                downloadPromptBtn.addEventListener('click', downloadPromptTxt);
+
+                generateCaptionBtn.addEventListener('click', handleGenerateCaption);
+
+                // History Events
+                historySearchInput.addEventListener('input', renderHistory);
+                exportJsonBtn.addEventListener('click', exportHistoryJSON);
+                importJsonBtn.addEventListener('click', () => importFileInput.click());
+                importFileInput.addEventListener('change', importHistoryJSON);
+                clearAllHistoryBtn.addEventListener('click', clearAllHistory);
+
+                // Mobile Sidebar Controls
+                openSidebarBtn.addEventListener('click', () => sidebar.classList.add('open'));
+                closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('open'));
+
+                // Global Shortcut (Ctrl + Enter or Cmd + Enter)
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        generatePrompt();
+                        showToast('Generated Prompt via Shortcut', 'info');
+                    }
+                });
+            }
+
+            function updateCharCount() {
+                const len = contextInput.value.length;
+                contextCountDisplay.textContent = `${len} / 500`;
+            }
+
+            // --- Prompt Generation Logic ---
+            function generatePrompt() {
+                const role = roleInput.value.trim();
+                const audience = audienceInput.value.trim();
+                const context = contextInput.value.trim();
+                const format = formatInput.value.trim();
+                const constraints = constraintsInput.value.trim();
+                const language = languageInput.value.trim();
+
+                if (!role && !context && !audience) {
+                    showToast('Please fill out at least Role or Context fields.', 'error');
+                    return null;
+                }
+
+                const structuredPrompt = 
+`Role:
+${role || 'Expert Social Media Strategist'}
+
+Audience:
+${audience || 'General Instagram Audience'}
+
+Context:
+${context || 'General post update'}
+
+Format:
+${format || 'Standard engaging caption with hook and CTA'}
+
+Constraints:
+${constraints || 'High quality, crisp writing, relevant emojis'}
+
+Language:
+${language || 'English (US)'}
+
+Instructions:
+Generate only a high-quality, engaging Instagram caption based on the exact parameters defined above. Ensure it grabs attention in the first line, builds emotional resonance or interest, delivers clear value, and ends with an impactful call-to-action along with strategic hashtags.`;
+
+                generatedPromptBox.innerText = structuredPrompt;
+                generatedPromptBox.classList.remove('empty');
+                return structuredPrompt;
+            }
+
+            // --- Copy & File Utilities ---
+            function copyToClipboard(text, buttonEl, defaultLabel) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Copied to clipboard!', 'success');
+                    if (buttonEl) {
+                        const originalHTML = buttonEl.innerHTML;
+                        buttonEl.innerHTML = `<i class="fa-solid fa-check"></i> Copied!`;
+                        setTimeout(() => {
+                            buttonEl.innerHTML = originalHTML;
+                        }, 2000);
+                    }
+                }).catch(err => {
+                    showToast('Failed to copy text.', 'error');
+                });
+            }
+
+            function downloadPromptTxt() {
+                const promptText = generatedPromptBox.innerText;
+                if (!promptText || generatedPromptBox.classList.contains('empty')) {
+                    showToast('Generate a prompt first before downloading.', 'error');
+                    return;
+                }
+                const blob = new Blob([promptText], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `instagram-prompt-${Date.now()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Prompt downloaded as .txt', 'success');
+            }
+
+            function clearFormInputs() {
+                roleInput.value = '';
+                audienceInput.value = '';
+                contextInput.value = '';
+                formatInput.value = '';
+                constraintsInput.value = '';
+                languageInput.value = '';
+                updateCharCount();
+                showToast('Form inputs cleared', 'info');
+            }
+
+            // --- Direct AI Generation Integration ---
+            async function handleGenerateCaption() {
+                let prompt = generatedPromptBox.innerText;
+                if (!prompt || generatedPromptBox.classList.contains('empty')) {
+                    prompt = generatePrompt();
+                    if (!prompt) return;
+                }
+
+                const provider = aiProviderSelect.value;
+                const model = aiModelSelect.value;
+                const apiKey = apiKeyInput.value.trim();
+
+                if (!apiKey) {
+                    showToast('Please enter an API key for ' + (provider === 'openai' ? 'OpenAI' : 'Google Gemini'), 'error');
+                    apiKeyInput.focus();
+                    return;
+                }
+
+                // Show loading spinner
+                captionSpinner.classList.add('active');
+                aiCaptionBox.classList.add('empty');
+                aiCaptionBox.innerText = 'Generating caption from AI...';
+
+                try {
+                    let caption = '';
+                    if (provider === 'openai') {
+                        caption = await fetchOpenAICaption(apiKey, model, prompt);
+                    } else if (provider === 'gemini') {
+                        caption = await fetchGeminiCaption(apiKey, model, prompt);
+                    }
+
+                    aiCaptionBox.innerText = caption;
+                    aiCaptionBox.classList.remove('empty');
+                    showToast('Caption generated successfully!', 'success');
+
+                    // Save to history
+                    saveToHistory({
+                        role: roleInput.value.trim(),
+                        audience: audienceInput.value.trim(),
+                        context: contextInput.value.trim(),
+                        prompt: prompt,
+                        aiResponse: caption
+                    });
+
+                } catch (err) {
+                    aiCaptionBox.innerText = `Error: ${err.message}`;
+                    aiCaptionBox.classList.remove('empty');
+                    showToast(err.message, 'error');
+                } finally {
+                    captionSpinner.classList.remove('active');
+                }
+            }
+
+            // OpenAI API Request
+            async function fetchOpenAICaption(apiKey, model, prompt) {
+                const endpoint = 'https://api.openai.com/v1/chat/completions';
+                
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: model,
+                            messages: [
+                                { role: 'system', content: 'You are an expert social media and Instagram content creator.' },
+                                { role: 'user', content: prompt }
+                            ],
+                            temperature: 0.7
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            throw new Error('Invalid OpenAI API Key provided.');
+                        }
+                        throw new Error(data.error?.message || `OpenAI API returned status ${response.status}`);
+                    }
+
+                    return data.choices[0]?.message?.content?.trim() || 'No content returned from OpenAI.';
+                } catch (err) {
+                    if (err.name === 'TypeError') {
+                        throw new Error('Network error. Check your internet connection or CORS settings.');
+                    }
+                    throw err;
+                }
+            }
+
+            // Google Gemini API Request
+            async function fetchGeminiCaption(apiKey, model, prompt) {
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            contents: [
+                                {
+                                    parts: [
+                                        { text: prompt }
+                                    ]
+                                }
+                            ]
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        if (response.status === 400 && data.error?.message?.includes('API key')) {
+                            throw new Error('Invalid Google Gemini API Key provided.');
+                        }
+                        throw new Error(data.error?.message || `Gemini API returned status ${response.status}`);
+                    }
+
+                    const candidate = data.candidates?.[0];
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        return candidate.content.parts[0].text.trim();
+                    } else {
+                        throw new Error('No content returned from Google Gemini.');
+                    }
+                } catch (err) {
+                    if (err.name === 'TypeError') {
+                        throw new Error('Network error connecting to Google Gemini API.');
+                    }
+                    throw err;
+                }
+            }
+
+            // --- History Management (LocalStorage) ---
+            function loadHistory() {
+                try {
+                    const stored = localStorage.getItem('pg_history_items');
+                    historyData = stored ? JSON.parse(stored) : [];
+                } catch (e) {
+                    historyData = [];
+                }
+                renderHistory();
+            }
+
+            function saveToHistory(item) {
+                const now = new Date();
+                const historyEntry = {
+                    id: Date.now().toString(),
+                    date: now.toLocaleDateString(),
+                    time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    role: item.role,
+                    audience: item.audience,
+                    context: item.context,
+                    prompt: item.prompt,
+                    aiResponse: item.aiResponse
+                };
+
+                historyData.unshift(historyEntry);
+                localStorage.setItem('pg_history_items', JSON.stringify(historyData));
+                renderHistory();
+            }
+
+            function renderHistory() {
+                const searchTerm = historySearchInput.value.toLowerCase().trim();
+                const filtered = historyData.filter(item => {
+                    return (item.context && item.context.toLowerCase().includes(searchTerm)) ||
+                           (item.prompt && item.prompt.toLowerCase().includes(searchTerm)) ||
+                           (item.role && item.role.toLowerCase().includes(searchTerm));
+                });
+
+                if (filtered.length === 0) {
+                    historyList.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.82rem;">No history items found.</div>`;
+                    return;
+                }
+
+                historyList.innerHTML = filtered.map(item => `
+                    <div class="history-item" data-id="${item.id}">
+                        <div class="history-item-header">
+                            <span>${item.date} ${item.time}</span>
+                            <button class="delete-hist-btn" onclick="event.stopPropagation(); deleteHistoryItem('${item.id}')" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                        <div class="history-item-title">${escapeHTML(item.context || item.role || 'Generated Prompt')}</div>
+                        <div class="history-item-desc">${escapeHTML(item.prompt.substring(0, 90))}...</div>
+                    </div>
+                `).join('');
+
+                // Add click events to load item
+                document.querySelectorAll('.history-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const id = el.getAttribute('data-id');
+                        const item = historyData.find(h => h.id === id);
+                        if (item) {
+                            generatedPromptBox.innerText = item.prompt;
+                            generatedPromptBox.classList.remove('empty');
+                            
+                            if (item.aiResponse) {
+                                aiCaptionBox.innerText = item.aiResponse;
+                                aiCaptionBox.classList.remove('empty');
+                            }
+                            
+                            showToast('Loaded prompt & caption from history', 'info');
+                            if (window.innerWidth <= 768) {
+                                sidebar.classList.remove('open');
+                            }
+                        }
+                    });
+                });
+            }
+
+            window.deleteHistoryItem = function(id) {
+                historyData = historyData.filter(item => item.id !== id);
+                localStorage.setItem('pg_history_items', JSON.stringify(historyData));
+                renderHistory();
+                showToast('Item deleted from history', 'info');
+            };
+
+            function clearAllHistory() {
+                if (historyData.length === 0) return;
+                if (confirm('Are you sure you want to delete all saved prompt history?')) {
+                    historyData = [];
+                    localStorage.removeItem('pg_history_items');
+                    renderHistory();
+                    showToast('All history cleared', 'info');
+                }
+            }
+
+            function exportHistoryJSON() {
+                if (historyData.length === 0) {
+                    showToast('No history available to export.', 'error');
+                    return;
+                }
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(historyData, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `prompt-generator-history-${Date.now()}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                showToast('History exported as JSON', 'success');
+            }
+
+            function importHistoryJSON(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        if (Array.isArray(imported)) {
+                            historyData = [...imported, ...historyData];
+                            localStorage.setItem('pg_history_items', JSON.stringify(historyData));
+                            renderHistory();
+                            showToast(`Successfully imported ${imported.length} items!`, 'success');
+                        } else {
+                            showToast('Invalid JSON structure.', 'error');
+                        }
+                    } catch (err) {
+                        showToast('Error parsing JSON file.', 'error');
+                    }
+                };
+                reader.readAsText(file);
+                // Reset file input
+                e.target.value = '';
+            }
+
+            // --- Toast Notification Helper ---
+            function showToast(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                
+                let iconClass = 'fa-circle-info';
+                if (type === 'success') iconClass = 'fa-circle-check';
+                if (type === 'error') iconClass = 'fa-circle-exclamation';
+
+                toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${escapeHTML(message)}</span>`;
+                container.appendChild(toast);
+
+                setTimeout(() => toast.classList.add('show'), 10);
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            function escapeHTML(str) {
+                if (!str) return '';
+                return str.replace(/[&<>'"]/g, 
+                    tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+                );
+            }
+        });
+    </script>
+</body>
+</html>
